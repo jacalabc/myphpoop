@@ -10,18 +10,13 @@ $cat = new Cat('小花','黑白');
 echo $cat->getType();
 echo $cat->getName();
 echo $cat->getColor();
+$cat->hide();
 $dog = new Dog('普魯斯','黑色');
 echo $dog->getType();
 echo $dog->getName();
 echo $dog->getColor();
-$turtle= new Animal('達文西','墨綠色','烏龜');
-echo $turtle->getType();
-echo $turtle->getName();
-echo $turtle->getColor();
-$guineapig= new Animal('puipui','黃色','天竺鼠');
-echo $guineapig->getType();
-echo $guineapig->getName();
-echo $guineapig->getColor();
+$dog->eat();
+
 class Animal
 {
     protected $type = 'animal';
@@ -72,6 +67,9 @@ class Cat extends Animal{
             $this->hair_color=$color;
             $this->type='貓';
         }
+        public function hide(){
+            echo "很會躲";
+        }
 }
 
 class Dog extends Animal{
@@ -79,6 +77,12 @@ class Dog extends Animal{
     {
         $this->name=$name;
         $this->hair_color=$color;
-        $this->type='狗';
+        $this->type='狗';        
+    }   
+    public function eat(){
+        echo "很會吃";
     }
 }
+
+
+
