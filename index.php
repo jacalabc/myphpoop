@@ -1,11 +1,15 @@
 <?php
+// $cat = new Animal;
+// $dog = new Animal;
+// echo $cat->type;
+// echo "<br>";
+// echo $dog->type;
+
+// 方法的使用
 $cat = new Animal;
-
 $dog = new Animal;
-
-echo $cat->type;
-echo "<br>";
-echo $dog->type;
+$cat->run();
+$cat->speed();
 Class Animal{
     protected $type='animal';
     protected $name='John';
@@ -18,11 +22,13 @@ Class Animal{
     public function run(){
         //公開行為內容
         echo "我會跑喔";
+        $this->speed();
+        echo $this->type;
     }
 
     private function speed(){
         //私有行為內容
-        echo "我會叫喔";
+        echo "我會加速喔";       
     }
 
 }
