@@ -1,10 +1,4 @@
 <?php
-// $cat = new Animal;
-// $dog = new Animal;
-// echo $cat->type;
-// echo "<br>";
-// echo $dog->type;
-
 // 方法的使用
 // $cat = new Animal;
 // $dog = new Animal;
@@ -12,11 +6,11 @@
 // $cat->speed();
 
 // 建構式的使用
-$cat = new Animal('小花','黑白相間','貓');
+$cat = new Cat('小花','黑白');
 echo $cat->getType();
 echo $cat->getName();
 echo $cat->getColor();
-$dog = new Animal('小立','土黃色','狗');
+$dog = new Dog('普魯斯','黑色');
 echo $dog->getType();
 echo $dog->getName();
 echo $dog->getColor();
@@ -69,5 +63,22 @@ class Animal
     {
         //私有行為內容
         echo "我會加速喔";
+    }   
+}
+class Cat extends Animal{
+        public function __construct($name,$color)
+        {
+            $this->name=$name;
+            $this->hair_color=$color;
+            $this->type='貓';
+        }
+}
+
+class Dog extends Animal{
+    public function __construct($name,$color)
+    {
+        $this->name=$name;
+        $this->hair_color=$color;
+        $this->type='狗';
     }
 }
