@@ -49,7 +49,8 @@ echo "<hr>";
 echo "dept為2的資料筆數:".$Student->count(['dept'=>2]);
 echo "<hr>"; */
 
-
+$rows=q("select * from `dept` order by id desc");
+dd($rows);
 class DB{
     protected $table;
     protected $dsn="mysql:host=localhost;charset=utf8;dbname=school";
@@ -230,4 +231,15 @@ function dd($array){
     echo "</pre>";
 }
 
-?>
+// 萬用sql函式
+    function q($sql){
+        $dsn="mysql:host=localhost;charset=uth8;dbname:school";
+        $pdo=new PDO($dsn,'root','');
+        //echo $sql;
+        return $pdo->query($sql)->fetchAll();
+    }
+
+//header函式
+function to($location){
+    header("location:$location");
+}
