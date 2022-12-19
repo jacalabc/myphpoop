@@ -16,27 +16,28 @@ foreach($stus as $stu){
 } */
 
 //新增資料
-// $Student->save(['name'=>'張大同','dept'=>2,'uni_id'=>"H22211223"]);
+/* $Student->save(['name'=>'張大同','dept'=>2,'uni_id'=>"H22211223"]);
 
-//echo "<hr>";
+echo "<hr>"; */
 //更新資料
-// $Student->save(['name'=>'張大同','dept'=>2,'uni_id'=>"H22211223",'id'=>3]);
-// $stu=$Student->find(15);
-// dd($stu);
-// $stu['name']="陳秋桂";
-// $Student->save($stu);
+//$Student->save(['name'=>'張大同','dept'=>2,'uni_id'=>"H22211223",'id'=>3]);
+$stu=$Student->find(['uni_id'=>"C200000058"]);
+dd($stu);
+//$stu['name']="陳秋桂";
+//$Student->save($stu);
 
-// 數學函式
+//數學函式
 /*count
 sum
 max
 min
-avg*/
-// echo $Student->count(['dept'=>2]);
-// echo $Student->sum('graduate_at');
-// echo "<hr>";
-// echo $Student->sum('graduate_at',['dept'=>2]);
-$Score = new DB("student_scores");
+avg
+*/
+//echo $Student->count(['dept'=>2]);
+/* echo  $Student->sum('graduate_at');
+echo "<hr>";
+echo  $Student->sum("graduate_at",['dept'=>2]); */
+/* $Score=new DB("student_scores");
 echo $Score->max('score');
 echo "<hr>";
 echo $Score->min('score');
@@ -46,7 +47,8 @@ echo "<hr>";
 echo "整張資料表筆數：".$Student->count();
 echo "<hr>";
 echo "dept為2的資料筆數:".$Student->count(['dept'=>2]);
-echo "<hr>";
+echo "<hr>"; */
+
 
 class DB{
     protected $table;
@@ -61,19 +63,18 @@ class DB{
 
 
     public function all(...$args){
-/*
-  原本函式all()的內容
-global $pdo;
-    $sql="select * from $table ";
+
+    $sql="select * from $this->table ";
 
     if(isset($args[0])){
         if(is_array($args[0])){
             //是陣列 ['acc'=>'mack','pw'=>'1234'];
             //是陣列 ['product'=>'PC','price'=>'10000'];
 
-            foreach($args[0] as $key => $value){
+            /* foreach($args[0] as $key => $value){
                 $tmp[]="`$key`='$value'";
-            }
+            } */
+            $tmp=$this->arrayToSqlArray($args[0]);
 
             $sql=$sql ." WHERE ". join(" && " ,$tmp);
         }else{
@@ -87,31 +88,6 @@ global $pdo;
     }
 
     //echo $sql;
-    return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC); */
-
-    $sql="select * from $this->table ";
-
-    if(isset($args[0])){
-        if(is_array($args[0])){
-            //是陣列 ['acc'=>'mack','pw'=>'1234'];
-            //是陣列 ['product'=>'PC','price'=>'10000'];
-
-            foreach($args[0] as $key => $value){
-                $tmp[]="`$key`='$value'";
-            }
-
-            $sql=$sql ." WHERE ". join(" && " ,$tmp);
-        }else{
-            //是字串
-            $sql=$sql . $args[0];
-        }
-    }
-
-    if(isset($args[1])){
-        $sql = $sql . $args[1];
-    }
-
-    echo $sql;
     return $this->pdo
                 ->query($sql)
                 ->fetchAll(PDO::FETCH_ASSOC);
@@ -123,10 +99,10 @@ global $pdo;
         $sql="select * from `$this->table` ";
 
         if(is_array($id)){
-            foreach($id as $key => $value){
+            $tmp=$this->arrayToSqlArray($id);
+            /* foreach($id as $key => $value){
                 $tmp[]="`$key`='$value'";
-            }
-    
+            } */
             $sql = $sql . " where " . join(" && ",$tmp);
     
         }else{
@@ -142,10 +118,10 @@ global $pdo;
         $sql="delete from `$this->table` ";
 
         if(is_array($id)){
-            foreach($id as $key => $value){
+            /* foreach($id as $key => $value){
                 $tmp[]="`$key`='$value'";
-            }
-    
+            } */
+            $tmp=$this->arrayToSqlArray($id);
             $sql = $sql . " where " . join(" && ",$tmp);
     
         }else{
@@ -153,7 +129,7 @@ global $pdo;
             $sql=$sql . " where `id`='$id'";
         }
 
-        echo $sql;
+        //echo $sql;
         return $this->pdo->exec($sql);
 
     }
@@ -161,18 +137,17 @@ global $pdo;
     function save($array){
         if(isset($array['id'])){
             //更新update
-            foreach($array as $key => $value){
-              /*if($key!='id'){
+            /* foreach($array as $key => $value){
+              if($key!='id'){
                     $tmp[]="`$key`='$value'";
-                } */
-                if($key!='id'){
-                    $tmp[]="`$key`='$value'";
-                }
-            }
-
+                } 
+            }  */
+            $id=$array['id'];
+            unset($array['id']);
+            $tmp=$this->arrayToSqlArray($array);
             $sql ="update $this->table set ";
             $sql .=join(",",$tmp);
-            $sql .=" where `id`='{$array['id']}'";
+            $sql .=" where `id`='$id'";
 
         }else{
             //新增insert
@@ -182,62 +157,69 @@ global $pdo;
                                      values('" . join("','",$array) . "')";
 
         }
-            // echo $sql;
+
+            //echo $sql;
             return $this->pdo->exec($sql);
+
     }
 
     function count(...$arg){
+
         $sql=$this->mathSql('count','*',$arg);
-        // echo $sql;
+        //echo $sql;
         return $this->pdo->query($sql)->fetchColumn();
     }
 
     function sum($col,...$arg){
         $sql=$this->mathSql('sum',$col,$arg);
-        // echo $sql;
+       // echo $sql;
         return $this->pdo->query($sql)->fetchColumn();
     }
 
     function max($col,...$arg){
         $sql=$this->mathSql('max',$col,$arg);
-        // echo $sql;
+
+       // echo $sql;
         return $this->pdo->query($sql)->fetchColumn();
     }
 
     function min($col,...$arg){
-        $sql=$this->mathSql('min',$col,$arg);
-        // echo $sql;
+        $sql=$this->mathSql('min',$col,$arg);;
+
+        //echo $sql;
         return $this->pdo->query($sql)->fetchColumn();
     }
 
     function avg($col,...$arg){
-        /*if(isset($arg[0])){
-            foreach($arg[0] as $key => $value){
-                $tmp[]="`$key`='$value'";
-            }
-            $sql="select avg($col) from $this->table where";
-            $sql.=join(" && ",$tmp);
-        }else{
-            $sql="select avg($col) from $this->table";
-        }*/
 
-        // dd($arg);
         $sql=$this->mathSql('avg',$col,$arg);
-        // echo $sql;
+
+       // echo $sql;
         return $this->pdo->query($sql)->fetchColumn();
     }
 
     private function mathSql($math,$col,...$arg){
         if(isset($arg[0][0])){
-            foreach($arg[0][0] as $key => $value){
+            /* foreach($arg[0][0] as $key => $value){
                 $tmp[]="`$key`='$value'";
-            }
-            $sql="select $math($col) from $this->table where";
+            } */
+            $tmp=$this->arrayToSqlArray($arg[0][0]);
+            $sql="select $math($col) from $this->table where ";
             $sql.=join(" && ",$tmp);
         }else{
+
             $sql="select $math($col) from $this->table";
         }
+
         return $sql;
+    }
+
+    private function arrayToSqlArray($array){
+        //dd($array);
+        foreach($array as $key => $value){
+            $tmp[]="`$key`='$value'";
+        }
+        return $tmp;
     }
 
 }
