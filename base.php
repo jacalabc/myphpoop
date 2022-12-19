@@ -209,35 +209,19 @@ global $pdo;
     }
 
     function max($col,...$arg){
-        if(isset($arg[0])){
-            foreach($arg[0] as $key => $value){
-                $tmp[]="`$key`='$value'";
-            }
-            $sql="select max($col) from $this->table where";
-            $sql.=join(" && ",$tmp);
-        }else{
-            $sql="select max($col) from $this->table";
-        }
+        $sql=$this->mathSql('max',$col,$arg);
         echo $sql;
         return $this->pdo->query($sql)->fetchColumn();
     }
 
     function min($col,...$arg){
-        if(isset($arg[0])){
-            foreach($arg[0] as $key => $value){
-                $tmp[]="`$key`='$value'";
-            }
-            $sql="select min($col) from $this->table where";
-            $sql.=join(" && ",$tmp);
-        }else{
-            $sql="select min($col) from $this->table";
-        }
+        $sql=$this->mathSql('min',$col,$arg);
         echo $sql;
         return $this->pdo->query($sql)->fetchColumn();
     }
 
     function avg($col,...$arg){
-        if(isset($arg[0])){
+        /*if(isset($arg[0])){
             foreach($arg[0] as $key => $value){
                 $tmp[]="`$key`='$value'";
             }
@@ -245,9 +229,25 @@ global $pdo;
             $sql.=join(" && ",$tmp);
         }else{
             $sql="select avg($col) from $this->table";
-        }
+        }*/
+
+        // dd($arg);
+        $sql=$this->mathSql('avg',$col,$arg);
         echo $sql;
         return $this->pdo->query($sql)->fetchColumn();
+    }
+
+    private function mathSql($math,$col,...$arg){
+        if(isset($arg[0][0])){
+            foreach($arg[0][0] as $key => $value){
+                $tmp[]="`$key`='$value'";
+            }
+            $sql="select $math($col) from $this->table where";
+            $sql.=join(" && ",$tmp);
+        }else{
+            $sql="select $math($col) from $this->table";
+        }
+        return $sql;
     }
 
 }
