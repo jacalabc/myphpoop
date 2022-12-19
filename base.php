@@ -3,15 +3,21 @@
 $Student=new DB('students');
 
 // var_dump($Student);
-$john=$Student->find(30);
-echo $john['name'];
+// $john=$Student->find(30);
+// echo $john['name'];
 
-$stus=$Student->all(['dept'=>3]);
-foreach($stus as $stu){
-    echo $stu['parents']."=>".$stu['dept'];
-    echo "<br>";
-}
+// $Student->del(10);
+// $Student->del(['dept'=>1]);
 
+
+// $stus=$Student->all(['dept'=>3]);
+// foreach($stus as $stu){
+//     echo $stu['parents']."=>".$stu['dept'];
+//     echo "<br>";
+// }
+
+// 新增資料
+$Student->save(['name'=>'張大同','dept'=>2,'uni_id'=>"H22211223"]);
 class DB{
     protected $table;
     protected $dsn="mysql:host=localhost;charset=utf8;dbname=school";
@@ -89,7 +95,42 @@ class DB{
         return $this->pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
 }
 
+    function del($id){
+        $sql = "DELETE FROM `$this->table` ";
+
+     if (is_array($id)) {
+            foreach ($id as $key => $value) {
+                $tmp[] = "`$key`='$value'";
+            }
+
+            $sql = $sql . " WHERE " . join(" && ", $tmp);
+        } else {
+            $sql = $sql . "WHERE `id`='$id'";
+        }
+        echo $sql;
+        return $this->pdo->exec($sql);
 }
 
+        function save($array){
+        if(isset($array['id'])){
+                //更新update
+            }else{
+             //新增insert
+                $cols=array_keys($array);
+    
+                $sql="insert into `$this->table` (`" . join("`,`",$cols) . "`) 
+                                        values('" . join("','",$array) . "')";
 
-?>
+             echo $sql;
+                return $this->pdo->exec($sql);
+            }
+
+        }
+    
+        function dd($array){
+            echo "<pre>";
+            print_r($array);
+            echo "</pre>";
+        }
+
+}
