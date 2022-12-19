@@ -1,56 +1,4 @@
 <?php 
-
-$Student=new DB('students');
-
-//var_dump($Student);
-/* $john=$Student->find(30);
-echo $john['name']; */
-
-//$Student->del(10);
-/* $Student->del(['dept'=>1]);
-
-$stus=$Student->all(['dept'=>3]);
-foreach($stus as $stu){
-    echo $stu['parents'] . "=>".$stu['dept'];
-    echo "<br>";
-} */
-
-//新增資料
-/* $Student->save(['name'=>'張大同','dept'=>2,'uni_id'=>"H22211223"]);
-
-echo "<hr>"; */
-//更新資料
-//$Student->save(['name'=>'張大同','dept'=>2,'uni_id'=>"H22211223",'id'=>3]);
-$stu=$Student->find(['uni_id'=>"C200000058"]);
-dd($stu);
-//$stu['name']="陳秋桂";
-//$Student->save($stu);
-
-//數學函式
-/*count
-sum
-max
-min
-avg
-*/
-//echo $Student->count(['dept'=>2]);
-/* echo  $Student->sum('graduate_at');
-echo "<hr>";
-echo  $Student->sum("graduate_at",['dept'=>2]); */
-/* $Score=new DB("student_scores");
-echo $Score->max('score');
-echo "<hr>";
-echo $Score->min('score');
-echo "<hr>";
-echo $Score->avg('score');
-echo "<hr>";
-echo "整張資料表筆數：".$Student->count();
-echo "<hr>";
-echo "dept為2的資料筆數:".$Student->count(['dept'=>2]);
-echo "<hr>"; */
-
-$rows=q("select * from `dept` order by id desc");
-dd($rows);
 class DB{
     protected $table;
     protected $dsn="mysql:host=localhost;charset=utf8;dbname=school";
@@ -62,19 +10,12 @@ class DB{
         $this->table=$table;
     }
 
-
     public function all(...$args){
 
     $sql="select * from $this->table ";
 
     if(isset($args[0])){
         if(is_array($args[0])){
-            //是陣列 ['acc'=>'mack','pw'=>'1234'];
-            //是陣列 ['product'=>'PC','price'=>'10000'];
-
-            /* foreach($args[0] as $key => $value){
-                $tmp[]="`$key`='$value'";
-            } */
             $tmp=$this->arrayToSqlArray($args[0]);
 
             $sql=$sql ." WHERE ". join(" && " ,$tmp);
@@ -92,18 +33,13 @@ class DB{
     return $this->pdo
                 ->query($sql)
                 ->fetchAll(PDO::FETCH_ASSOC);
-
     }
-
 
     function find($id){
         $sql="select * from `$this->table` ";
 
         if(is_array($id)){
             $tmp=$this->arrayToSqlArray($id);
-            /* foreach($id as $key => $value){
-                $tmp[]="`$key`='$value'";
-            } */
             $sql = $sql . " where " . join(" && ",$tmp);
     
         }else{
@@ -119,9 +55,6 @@ class DB{
         $sql="delete from `$this->table` ";
 
         if(is_array($id)){
-            /* foreach($id as $key => $value){
-                $tmp[]="`$key`='$value'";
-            } */
             $tmp=$this->arrayToSqlArray($id);
             $sql = $sql . " where " . join(" && ",$tmp);
     
@@ -138,11 +71,6 @@ class DB{
     function save($array){
         if(isset($array['id'])){
             //更新update
-            /* foreach($array as $key => $value){
-              if($key!='id'){
-                    $tmp[]="`$key`='$value'";
-                } 
-            }  */
             $id=$array['id'];
             unset($array['id']);
             $tmp=$this->arrayToSqlArray($array);
@@ -158,7 +86,6 @@ class DB{
                                      values('" . join("','",$array) . "')";
 
         }
-
             //echo $sql;
             return $this->pdo->exec($sql);
 
@@ -201,9 +128,7 @@ class DB{
 
     private function mathSql($math,$col,...$arg){
         if(isset($arg[0][0])){
-            /* foreach($arg[0][0] as $key => $value){
-                $tmp[]="`$key`='$value'";
-            } */
+
             $tmp=$this->arrayToSqlArray($arg[0][0]);
             $sql="select $math($col) from $this->table where ";
             $sql.=join(" && ",$tmp);
@@ -231,15 +156,17 @@ function dd($array){
     echo "</pre>";
 }
 
-// 萬用sql函式
-    function q($sql){
-        $dsn="mysql:host=localhost;charset=uth8;dbname:school";
-        $pdo=new PDO($dsn,'root','');
-        //echo $sql;
-        return $pdo->query($sql)->fetchAll();
-    }
+//萬用sql函式
+function q($sql){
+    $dsn="mysql:host=localhost;charset=utf8;dbname=school";
+    $pdo=new PDO($dsn,'root','');
+    //echo $sql;
+    return $pdo->query($sql)->fetchAll();
+}
 
 //header函式
 function to($location){
     header("location:$location");
 }
+
+?>
