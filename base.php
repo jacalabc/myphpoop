@@ -1,16 +1,26 @@
-<?php
+<?php 
 
 $Student=new DB('students');
+$Dept=new DB('dept');
 
-// var_dump($Student);
+echo $Dept->find(2)->name;
+
+//var_dump($Student);
 $john=$Student->find(30);
-echo $john['name'];
+echo is_object($john);
+echo "<pre>";
+print_r($john);
+echo "</pre>";
+echo $john->name;
+echo $john->parents;
 
+echo "<br>";
 $stus=$Student->all(['dept'=>3]);
 foreach($stus as $stu){
-    echo $stu['parents']."=>".$stu['dept'];
+    echo $stu['parents'] . "=>".$stu['dept'];
     echo "<br>";
 }
+
 
 class DB{
     protected $table;
@@ -23,73 +33,99 @@ class DB{
         $this->table=$table;
     }
 
+
     public function all(...$args){
-        // 原本函式all()的內容
-        // global $pdo;
-    // $sql = "SELECT * FROM $table ";
+/*
+  原本函式all()的內容
+global $pdo;
+    $sql="select * from $table ";
 
-    // if (isset($args[0])) {
-        // if (is_array($args[0])) {
-            // foreach ($args[0] as $key => $value) {
-                // $tmp[] = "`$key`='$value'";
-            // }
-            // $sql = $sql . " WHERE " . join(" && ", $tmp);
-        // } else {
-            // $sql = $sql . $args[0];
-        // }
-    // }
-    // if (isset($args[1])) {
-        // $sql = $sql . $args[1];
-    // }
-    // echo $sql;
-    // return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-    // }
+    if(isset($args[0])){
+        if(is_array($args[0])){
+            //是陣列 ['acc'=>'mack','pw'=>'1234'];
+            //是陣列 ['product'=>'PC','price'=>'10000'];
 
-    $sql = "select * from $this->table";
-
-    if (isset($args[0])) {
-        if (is_array($args[0])) {
-            // 是陣列 ['acc' => 'qwer1', 'pw' => 'qwer1'];
-            // 是陣列 ['product' => 'pc', 'price' => '10000'];
-
-            foreach ($args[0] as $key => $value) {
-                $tmp[] = "`$key`='$value'";
+            foreach($args[0] as $key => $value){
+                $tmp[]="`$key`='$value'";
             }
 
-            $sql = $sql . " WHERE " . join(" && ", $tmp);
-        } else {
-            // 是字串
-            $sql = $sql . $args[0];
+            $sql=$sql ." WHERE ". join(" && " ,$tmp);
+        }else{
+            //是字串
+            $sql=$sql . $args[0];
         }
     }
 
-    if (isset($args[1])) {
+    if(isset($args[1])){
         $sql = $sql . $args[1];
     }
 
-    echo $sql;
+    //echo $sql;
+    return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC); */
+
+    $sql="select * from $this->table ";
+
+    if(isset($args[0])){
+        if(is_array($args[0])){
+            //是陣列 ['acc'=>'mack','pw'=>'1234'];
+            //是陣列 ['product'=>'PC','price'=>'10000'];
+
+            foreach($args[0] as $key => $value){
+                $tmp[]="`$key`='$value'";
+            }
+
+            $sql=$sql ." WHERE ". join(" && " ,$tmp);
+        }else{
+            //是字串
+            $sql=$sql . $args[0];
+        }
+    }
+
+    if(isset($args[1])){
+        $sql = $sql . $args[1];
+    }
+
+    echo $sql;      
     return $this->pdo
                 ->query($sql)
                 ->fetchAll(PDO::FETCH_ASSOC);
-}
+    }
+
 
     function find($id){
-        $sql = "SELECT * FROM `$this->table` ";
+        $sql="select * from `$this->table` ";
 
-        if (is_array($id)) {
-            foreach ($id as $key => $value) {
-                $tmp[] = "`$key`='$value'";
+        if(is_array($id)){
+            foreach($id as $key => $value){
+                $tmp[]="`$key`='$value'";
             }
     
-            $sql = $sql . " WHERE " . join(" && ", $tmp);
-        } else {
-            $sql = $sql . "WHERE `id`='$id'";
-        }
+            $sql = $sql . " where " . join(" && ",$tmp);
     
-        return $this->pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
-}
+        }else{
+    
+            $sql=$sql . " where `id`='$id'";
+        }
+        //echo $sql;
+        $row= $this->pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+        
+        echo "<pre>";
+        print_r($row);
+        echo "</pre>";
+        $data=new stdClass;
+        //$data= $this->pdo->query($sql)->fetch(PDO::FETCH_OBJ);
+        foreach($row as $col => $value){
+          $data->{$col}=$value;
+        }
+        
+        echo "<pre>";
+        print_r($data);
+        echo "</pre>";
+
+          return $data;
+    }
+
 
 }
-
 
 ?>
